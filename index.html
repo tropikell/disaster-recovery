@@ -1,0 +1,1333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Disaster Recovery Companion — Hawaiʻi</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green-dark: #1a3d2b;
+    --green-mid: #2d6a47;
+    --green-light: #4a9464;
+    --green-pale: #e8f4ec;
+    --green-subtle: #f3f9f5;
+    --sand: #f7f4ef;
+    --sand-dark: #ede8df;
+    --text: #1c2b22;
+    --text-mid: #3d5248;
+    --text-light: #6b8272;
+    --white: #ffffff;
+    --border: #d4e4da;
+    --warning: #7a4f1a;
+    --warning-bg: #fdf3e3;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--sand);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 15px;
+    line-height: 1.65;
+  }
+
+  /* HEADER */
+  .header {
+    background: var(--green-dark);
+    color: white;
+    padding: 2rem 1.5rem 1.5rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    bottom: -1px; left: 0; right: 0;
+    height: 24px;
+    background: var(--sand);
+    clip-path: ellipse(55% 100% at 50% 100%);
+  }
+  .header-eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.55);
+    margin-bottom: 0.4rem;
+  }
+  .header h1 {
+    font-family: 'Lora', serif;
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: white;
+    margin-bottom: 0.3rem;
+  }
+  .header-sub {
+    font-size: 13px;
+    color: rgba(255,255,255,0.65);
+    margin-bottom: 1.2rem;
+  }
+  .progress-bar-wrap {
+    background: rgba(255,255,255,0.15);
+    border-radius: 999px;
+    height: 6px;
+    margin: 0 auto;
+    max-width: 320px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: #7fc99a;
+    border-radius: 999px;
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+  .progress-label {
+    font-size: 12px;
+    color: rgba(255,255,255,0.5);
+    margin-top: 0.4rem;
+  }
+
+  /* NAV TABS */
+  .nav-tabs {
+    display: flex;
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .nav-tabs::-webkit-scrollbar { display: none; }
+  .nav-tab {
+    flex: 0 0 auto;
+    padding: 0.9rem 1.1rem;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-light);
+    border: none;
+    background: none;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+    transition: all 0.2s;
+  }
+  .nav-tab.active {
+    color: var(--green-mid);
+    border-bottom-color: var(--green-mid);
+  }
+  .nav-tab .tab-check {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--green-light);
+    color: white;
+    font-size: 9px;
+    line-height: 14px;
+    text-align: center;
+    margin-left: 5px;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .nav-tab.done .tab-check { opacity: 1; }
+
+  /* SECTIONS */
+  .section { display: none; padding: 1.5rem; max-width: 640px; margin: 0 auto; }
+  .section.active { display: block; }
+
+  .section-title {
+    font-family: 'Lora', serif;
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--green-dark);
+    margin-bottom: 0.3rem;
+  }
+  .section-desc {
+    font-size: 13px;
+    color: var(--text-light);
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
+  }
+
+  /* CHECKLIST */
+  .checklist { display: flex; flex-direction: column; gap: 0.75rem; }
+  .check-item {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.1rem;
+    display: flex;
+    gap: 0.85rem;
+    align-items: flex-start;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .check-item:active { transform: scale(0.99); }
+  .check-item.checked {
+    background: var(--green-subtle);
+    border-color: #b8d9c4;
+  }
+  .check-box {
+    width: 22px;
+    height: 22px;
+    border: 1.5px solid var(--border);
+    border-radius: 6px;
+    flex-shrink: 0;
+    margin-top: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    background: white;
+  }
+  .check-item.checked .check-box {
+    background: var(--green-mid);
+    border-color: var(--green-mid);
+  }
+  .check-box svg { display: none; }
+  .check-item.checked .check-box svg { display: block; }
+  .check-text { flex: 1; }
+  .check-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1.45;
+    margin-bottom: 0.2rem;
+  }
+  .check-item.checked .check-label {
+    color: var(--text-light);
+    text-decoration: line-through;
+    text-decoration-color: #aac8b5;
+  }
+  .check-detail {
+    font-size: 12.5px;
+    color: var(--text-light);
+    line-height: 1.55;
+  }
+  .check-sub {
+    margin-top: 0.5rem;
+    padding-left: 0.8rem;
+    border-left: 2px solid var(--border);
+  }
+  .check-sub li {
+    font-size: 12px;
+    color: var(--text-light);
+    line-height: 1.6;
+    list-style: none;
+    padding: 1px 0;
+  }
+  .check-sub li::before { content: '— '; color: #b8d9c4; }
+
+  /* TIP CARD */
+  .tip-card {
+    background: var(--warning-bg);
+    border: 1px solid #f0d9b5;
+    border-radius: var(--radius);
+    padding: 0.9rem 1rem;
+    margin-bottom: 1rem;
+    font-size: 13px;
+    color: var(--warning);
+    line-height: 1.55;
+  }
+  .tip-card strong { font-weight: 500; }
+
+  /* INFO CARD */
+  .info-card {
+    background: var(--green-pale);
+    border: 1px solid #b8d9c4;
+    border-radius: var(--radius);
+    padding: 0.9rem 1rem;
+    margin-bottom: 1rem;
+    font-size: 13px;
+    color: var(--green-dark);
+    line-height: 1.55;
+  }
+  .info-card a { color: var(--green-mid); font-weight: 500; }
+
+  /* DIVIDER */
+  .divider { height: 1px; background: var(--border); margin: 1.25rem 0; }
+
+  /* FORM */
+  .form-group { margin-bottom: 1rem; }
+  .form-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-mid);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin-bottom: 0.35rem;
+  }
+  .form-input, .form-select {
+    width: 100%;
+    padding: 0.65rem 0.85rem;
+    font-size: 14px;
+    font-family: 'DM Sans', sans-serif;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: white;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.2s;
+    -webkit-appearance: none;
+  }
+  .form-input:focus, .form-select:focus { border-color: var(--green-mid); }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+  .form-section-title {
+    font-family: 'Lora', serif;
+    font-size: 1rem;
+    color: var(--green-dark);
+    margin: 1.25rem 0 0.75rem;
+  }
+
+  /* BUTTONS */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0.65rem 1.2rem;
+    border-radius: var(--radius-sm);
+    font-size: 13.5px;
+    font-weight: 500;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+  }
+  .btn:active { transform: scale(0.98); }
+  .btn-primary { background: var(--green-mid); color: white; }
+  .btn-primary:hover { background: var(--green-dark); }
+  .btn-outline { background: white; color: var(--green-mid); border: 1px solid var(--green-mid); }
+  .btn-outline:hover { background: var(--green-pale); }
+  .btn-full { width: 100%; justify-content: center; }
+  .btn-row { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-top: 1rem; }
+
+  /* DOC OUTPUT */
+  .doc-output {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.1rem;
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--text);
+    white-space: pre-wrap;
+    word-break: break-word;
+    min-height: 100px;
+    position: relative;
+  }
+  .doc-card { margin-bottom: 1.25rem; }
+  .doc-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+  }
+  .doc-card-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--green-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .copy-btn {
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 5px;
+    background: var(--green-pale);
+    color: var(--green-mid);
+    border: 1px solid #b8d9c4;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    transition: all 0.15s;
+  }
+  .copy-btn:active { background: var(--green-mid); color: white; }
+  .doc-placeholder {
+    color: var(--text-light);
+    font-style: italic;
+    font-size: 13px;
+    padding: 1rem;
+    text-align: center;
+  }
+
+  /* PHOTO LOG */
+  .photo-upload-zone {
+    border: 2px dashed var(--border);
+    border-radius: var(--radius);
+    padding: 2rem 1rem;
+    text-align: center;
+    cursor: pointer;
+    background: white;
+    transition: all 0.2s;
+    margin-bottom: 1rem;
+  }
+  .photo-upload-zone:hover { border-color: var(--green-light); background: var(--green-subtle); }
+  .upload-icon {
+    width: 40px;
+    height: 40px;
+    background: var(--green-pale);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 0.75rem;
+    color: var(--green-mid);
+  }
+  .upload-text { font-size: 14px; color: var(--text-mid); margin-bottom: 0.3rem; }
+  .upload-hint { font-size: 12px; color: var(--text-light); }
+  #photoFileInput { display: none; }
+
+  .photo-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; margin-top: 1rem; }
+  .photo-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .photo-thumb {
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+    display: block;
+  }
+  .photo-meta { padding: 0.6rem 0.7rem; }
+  .photo-tag-select {
+    width: 100%;
+    font-size: 12px;
+    font-family: 'DM Sans', sans-serif;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 4px 6px;
+    background: white;
+    color: var(--text);
+    margin-bottom: 0.4rem;
+    outline: none;
+  }
+  .photo-note-input {
+    width: 100%;
+    font-size: 12px;
+    font-family: 'DM Sans', sans-serif;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 4px 6px;
+    background: white;
+    color: var(--text);
+    resize: none;
+    outline: none;
+  }
+  .photo-date {
+    font-size: 10px;
+    color: var(--text-light);
+    margin-top: 3px;
+  }
+  .photo-remove {
+    display: block;
+    width: 100%;
+    font-size: 11px;
+    text-align: center;
+    padding: 4px;
+    color: #c0392b;
+    background: none;
+    border: none;
+    cursor: pointer;
+    border-top: 1px solid var(--border);
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  /* JOURNAL */
+  .journal-entry {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+  }
+  .journal-date {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 0.5rem;
+  }
+  .journal-textarea {
+    width: 100%;
+    font-size: 13.5px;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text);
+    border: none;
+    resize: none;
+    outline: none;
+    background: transparent;
+    line-height: 1.7;
+    min-height: 80px;
+  }
+
+  /* RESOURCES */
+  .resource-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.1rem;
+    margin-bottom: 0.75rem;
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+  }
+  .resource-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: var(--green-pale);
+    color: var(--green-mid);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 16px;
+  }
+  .resource-title { font-size: 14px; font-weight: 500; color: var(--text); }
+  .resource-desc { font-size: 12px; color: var(--text-light); margin-top: 2px; line-height: 1.5; }
+  .resource-link { font-size: 12px; color: var(--green-mid); font-weight: 500; margin-top: 4px; display: block; }
+
+  /* HELPERS */
+  .badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: var(--green-pale);
+    color: var(--green-mid);
+    margin-bottom: 0.75rem;
+  }
+  .empty-state {
+    text-align: center;
+    padding: 2rem 1rem;
+    color: var(--text-light);
+    font-size: 13px;
+  }
+  .save-toast {
+    position: fixed;
+    bottom: 1.5rem;
+    left: 50%;
+    transform: translateX(-50%) translateY(60px);
+    background: var(--green-dark);
+    color: white;
+    padding: 0.6rem 1.2rem;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 500;
+    transition: transform 0.3s ease;
+    z-index: 999;
+    pointer-events: none;
+  }
+  .save-toast.show { transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-eyebrow">Hawaiʻi Flood Recovery</div>
+  <h1>Disaster Recovery Companion</h1>
+  <div class="header-sub">Step-by-step guidance from a flood survivor</div>
+  <div class="progress-bar-wrap">
+    <div class="progress-bar-fill" id="progressFill"></div>
+  </div>
+  <div class="progress-label" id="progressLabel">0 of 0 steps completed</div>
+</div>
+
+<nav class="nav-tabs" id="navTabs">
+  <button class="nav-tab active" onclick="showSection('checklist')">
+    Checklist <span class="tab-check" id="check-checklist">✓</span>
+  </button>
+  <button class="nav-tab" onclick="showSection('myinfo')">
+    My Info <span class="tab-check" id="check-myinfo">✓</span>
+  </button>
+  <button class="nav-tab" onclick="showSection('documents')">
+    Documents <span class="tab-check" id="check-documents">✓</span>
+  </button>
+  <button class="nav-tab" onclick="showSection('photos')">
+    Photo Log <span class="tab-check" id="check-photos">✓</span>
+  </button>
+  <button class="nav-tab" onclick="showSection('journal')">
+    Daily Journal <span class="tab-check" id="check-journal">✓</span>
+  </button>
+  <button class="nav-tab" onclick="showSection('resources')">
+    Resources <span class="tab-check" id="check-resources">✓</span>
+  </button>
+</nav>
+
+<!-- CHECKLIST SECTION -->
+<div class="section active" id="section-checklist">
+  <div class="section-title">Recovery Checklist</div>
+  <div class="section-desc">Work through each step. Your progress is saved automatically.</div>
+
+  <div class="badge">First steps — do these immediately</div>
+  <div class="checklist">
+    <div class="check-item" onclick="toggleCheck(this)" data-id="c1">
+      <div class="check-box"><svg width="12" height="10" viewBox="0 0 12 10" fill="none"><path d="M1 5l3.5 3.5L11 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="check-text">
+        <div class="check-label">Leave if your home is unsafe</div>
+        <div class="check-detail">Do not stay in rising water to save belongings. Flood water can contain sewage, chemicals, sharp debris, mold, and bacteria. If water got near outlets or appliances, have an electrician inspect before plugging anything back in.</div>
+      </div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)" data-id="c2">
+      <div class="check-box"><svg width="12" height="10" viewBox="0 0 12 10" fill="none"><path d="M1 5l3.5 3.5L11 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="check-text">
+        <div class="check-label">Report damage to DEM/MEMA</div>
+        <div class="check-detail">Before federal funding is released to the state, DEM/MEMA must show local need. If your home or business was damaged, report it at the links provided in the Resources section — this directly unlocks more resources for Hawaiʻi.</div>
+      </div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)" data-id="c3">
+      <div class="check-box"><svg width="12" height="10" viewBox="0 0 12 10" fill="none"><path d="M1 5l3.5 3.5L11 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="check-text">
+        <div class="check-label">Post your needs publicly</div>
+        <div class="check-detail">Post what you need at your aligned list linked in the Resources tab so community members and volunteers can help.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+  <div class="badge">Day 1 — organization</div>
+  <div class="checklist">
+    <div class="check-item" onclick="toggleCheck(this)" data-id="c4">
+      <div class="check-box"><svg width="12" height="10" viewBox="0 0 12 10" fill="none"><path d="M1 5l3.5 3.5L11 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="check-text">
+        <div class="check-label">Get a multi-sleeve file folder and hardbound notebook</div>
+        <div class="check-detail">You will carry this notebook with you for the next year. Trust it is worth its weight in gold — write down every call, name, and number in it.</div>
+      </div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)" data-id="c5">
+      <div class="check-box"><svg width="12" height="10" viewBox="0 0 12 10" fill="none"><path d="M1 5l3.5 3.5L11 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="check-text">
+        <div class="check-label">Set up a dedicated Gmail address for disaster communications</div>
+        <div class="check-detail">Use this only for disaster-related emails so you aren't searching through your personal inbox. Add it to your phone. This way you can choose when you're ready to look at those emails.</div>
+      </div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)" data-id="c6">
+      <div class="check-box"><svg width="12" height="10" viewBox="0 0 12 10" fill="none"><path d="M1 5l3.5 3.5L11 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="check-text">
+        <div class="check-label">Create a phone album for disaster documents</div>
+        <div class="check-detail">Save all damage photos, receipts, screenshots, claim numbers, adjuster business cards, and contractor estimates there. One place for everything.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+  <div class="badge">Day 1 — document damage before cleaning</div>
+  <div class="checklist">
+    <div class="check-item" onclick="toggleCheck(this)" data-id="c7">
+      <div class="check-box"><svg width="12" height="10" viewBox="0 0 12 10" fill="none"><path d="M1 5l3.5 3.5L11 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="check-text">
+        <div class="check-label">Take a full walkthrough video — say the date out loud</div>
+        <div class="check-detail">Film every room before cleaning: bathrooms, kitchens, walls, flooring, furniture, electronics, artwork, storage areas, tools, business inventory. Open every closet. Then take close-up photos too.</div>
+      </div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)" data-id="c8">
+      <div class="check-box"><svg width="12" height="10" viewBox="0 0 12 10" fill="none"><path d="M1 5l3.5 3.5L11 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="check-text">
+        <div class="check-label">Photograph every valuable item and appliance</div>
+        <div class="check-detail">If you have contents coverage, this matters a lot. Capture furniture in each room, electronics, tools, business equipment, appliances, anything high-value, and the water line in each room and outside.</div>
+      </div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)" data-id="c9">
+      <div class="check-box"><svg width="12" height="10" viewBox="0 0 12 10" fill="none"><path d="M1 5l3.5 3.5L11 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="check-text">
+        <div class="check-label">Photograph appliance model and serial number tags</div>
+        <div class="check-detail">These are often exactly what insurers need. Where to find them:
+          <ul class="check-sub">
+            <li>Refrigerator/freezer: usually inside, upper left area</li>
+            <li>Dishwasher: inside edge of door, side of door, or frame when opened</li>
+            <li>Stove/oven: inside oven door, side of door frame, inside bottom drawer</li>
+            <li>Washer: under the lid or on the frame</li>
+            <li>Dryer: inside door, on door frame, or back panel</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+  <div class="badge">Insurance — if you have coverage</div>
+  <div class="checklist">
+    <div class="check-item" onclick="toggleCheck(this)" data-id="c10">
+      <div class="check-box"><svg width="12" height="10" viewBox="0 0 12 10" fill="none"><path d="M1 5l3.5 3.5L11 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="check-text">
+        <div class="check-label">Call your insurance company and open the claim</div>
+        <div class="check-detail">Do this as soon as you safely can. Ask for your claim number, adjuster contact, deadlines, what temporary repairs are allowed, and whether hotel, food, mileage, supplies, storage, or business interruption may be covered. Write every name down.</div>
+      </div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)" data-id="c11">
+      <div class="check-box"><svg width="12" height="10" viewBox="0 0 12 10" fill="none"><path d="M1 5l3.5 3.5L11 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="check-text">
+        <div class="check-label">Leave evidence if you must clean before the adjuster arrives</div>
+        <div class="check-detail">If you bleach, power wash, or begin remediation, try to leave at least one visible flood line or clear evidence inside and outside — otherwise it becomes harder to prove the level of flooding. Move fast on drying, but don't destroy your evidence.</div>
+      </div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)" data-id="c12">
+      <div class="check-box"><svg width="12" height="10" viewBox="0 0 12 10" fill="none"><path d="M1 5l3.5 3.5L11 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="check-text">
+        <div class="check-label">Start drying immediately once water recedes</div>
+        <div class="check-detail">You have a very short window before mold starts. Get air moving with fans, dehumidifiers, wet vacs, and ventilation as soon as it is safe. If drywall is wet, the sooner drying and assessment starts, the better.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+  <div class="badge">Ongoing — every day</div>
+  <div class="checklist">
+    <div class="check-item" onclick="toggleCheck(this)" data-id="c13">
+      <div class="check-box"><svg width="12" height="10" viewBox="0 0 12 10" fill="none"><path d="M1 5l3.5 3.5L11 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="check-text">
+        <div class="check-label">Keep a daily disaster journal</div>
+        <div class="check-detail">Write down who you called, who called back, claim number, what was damaged, what you bought, what you cleaned, where you stayed, what you were told, miles driven, and who told you to do what. It all blurs together fast.</div>
+      </div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)" data-id="c14">
+      <div class="check-box"><svg width="12" height="10" viewBox="0 0 12 10" fill="none"><path d="M1 5l3.5 3.5L11 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="check-text">
+        <div class="check-label">Save receipts for everything</div>
+        <div class="check-detail">Hotel, meals, clothing, pet supplies, cleaning supplies, bins, tarps, fans, wet vac, dehumidifier, gas, mileage, laundry, temporary repairs, storage, replacement essentials, business supplies, equipment rentals. Put paper receipts in a gallon ziplock and photograph each one.</div>
+      </div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)" data-id="c15">
+      <div class="check-box"><svg width="12" height="10" viewBox="0 0 12 10" fill="none"><path d="M1 5l3.5 3.5L11 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="check-text">
+        <div class="check-label">Set up ways to accept donations if you need help</div>
+        <div class="check-detail">Venmo, PayPal, Square, Cash App, and GoFundMe. Keep your GoFundMe description vague (e.g., "Storm Recovery") rather than specific — FEMA may call it a duplication of benefits if you received money for something they also cover.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MY INFO SECTION -->
+<div class="section" id="section-myinfo">
+  <div class="section-title">My Recovery Info</div>
+  <div class="section-desc">Enter your details once — they'll auto-fill all your documents.</div>
+
+  <div class="info-card">Your information is saved only on this device and never sent anywhere.</div>
+
+  <div class="form-section-title">Your details</div>
+  <div class="form-group">
+    <label class="form-label">Full name</label>
+    <input class="form-input" id="info-name" placeholder="Your full name" oninput="saveInfo()">
+  </div>
+  <div class="form-group">
+    <label class="form-label">Property address</label>
+    <input class="form-input" id="info-address" placeholder="Damaged property address" oninput="saveInfo()">
+  </div>
+  <div class="form-group">
+    <label class="form-label">Phone number</label>
+    <input class="form-input" id="info-phone" placeholder="Your phone number" oninput="saveInfo()">
+  </div>
+  <div class="form-group">
+    <label class="form-label">Email (your disaster email)</label>
+    <input class="form-input" id="info-email" placeholder="your.disaster@gmail.com" oninput="saveInfo()">
+  </div>
+  <div class="form-group">
+    <label class="form-label">Date of incident</label>
+    <input class="form-input" type="date" id="info-date" oninput="saveInfo()">
+  </div>
+  <div class="form-group">
+    <label class="form-label">Type of property</label>
+    <select class="form-select" id="info-proptype" onchange="saveInfo()">
+      <option value="">Select type...</option>
+      <option value="homeowner">Homeowner</option>
+      <option value="renter">Renter</option>
+      <option value="condo">Condo owner</option>
+    </select>
+  </div>
+
+  <div class="form-section-title">Insurance details</div>
+  <div class="form-group">
+    <label class="form-label">Insurance company</label>
+    <input class="form-input" id="info-insurer" placeholder="Company name" oninput="saveInfo()">
+  </div>
+  <div class="form-row">
+    <div class="form-group">
+      <label class="form-label">Policy number</label>
+      <input class="form-input" id="info-policy" placeholder="Policy #" oninput="saveInfo()">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Claim number</label>
+      <input class="form-input" id="info-claim" placeholder="Claim #" oninput="saveInfo()">
+    </div>
+  </div>
+  <div class="form-group">
+    <label class="form-label">Adjuster name</label>
+    <input class="form-input" id="info-adjuster-name" placeholder="Adjuster's full name" oninput="saveInfo()">
+  </div>
+  <div class="form-group">
+    <label class="form-label">Adjuster phone / email</label>
+    <input class="form-input" id="info-adjuster-contact" placeholder="Phone or email" oninput="saveInfo()">
+  </div>
+  <div class="form-group">
+    <label class="form-label">Brief damage description</label>
+    <input class="form-input" id="info-damage" placeholder="e.g. Flood water entered first floor, approximately 18 inches" oninput="saveInfo()">
+  </div>
+
+  <div class="form-section-title">Contractor details (fill in when known)</div>
+  <div class="form-group">
+    <label class="form-label">Contractor / company name</label>
+    <input class="form-input" id="info-contractor" placeholder="Contractor name" oninput="saveInfo()">
+  </div>
+  <div class="form-group">
+    <label class="form-label">Contractor phone / email</label>
+    <input class="form-input" id="info-contractor-contact" placeholder="Phone or email" oninput="saveInfo()">
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-primary" onclick="showSection('documents'); showToast('Info saved — documents updated')">Generate my documents →</button>
+  </div>
+</div>
+
+<!-- DOCUMENTS SECTION -->
+<div class="section" id="section-documents">
+  <div class="section-title">Generated Documents</div>
+  <div class="section-desc">Ready-to-send drafts using your saved info. Tap "Copy" on any document to paste it into email or text.</div>
+
+  <div class="tip-card"><strong>Tip:</strong> Review each document before sending and add any specific details about your situation. These are starting points, not final drafts.</div>
+
+  <div class="doc-card">
+    <div class="doc-card-header">
+      <div class="doc-card-title">Insurance — first contact email</div>
+      <button class="copy-btn" onclick="copyDoc('doc-insurance')">Copy</button>
+    </div>
+    <div class="doc-output" id="doc-insurance"></div>
+  </div>
+
+  <div class="doc-card">
+    <div class="doc-card-header">
+      <div class="doc-card-title">Adjuster follow-up email</div>
+      <button class="copy-btn" onclick="copyDoc('doc-adjuster')">Copy</button>
+    </div>
+    <div class="doc-output" id="doc-adjuster"></div>
+  </div>
+
+  <div class="doc-card">
+    <div class="doc-card-header">
+      <div class="doc-card-title">FEMA / MEMA damage report notes</div>
+      <button class="copy-btn" onclick="copyDoc('doc-fema')">Copy</button>
+    </div>
+    <div class="doc-output" id="doc-fema"></div>
+  </div>
+
+  <div class="doc-card">
+    <div class="doc-card-header">
+      <div class="doc-card-title">Contractor estimate request</div>
+      <button class="copy-btn" onclick="copyDoc('doc-contractor')">Copy</button>
+    </div>
+    <div class="doc-output" id="doc-contractor"></div>
+  </div>
+
+  <div class="doc-card">
+    <div class="doc-card-header">
+      <div class="doc-card-title">Daily journal template</div>
+      <button class="copy-btn" onclick="copyDoc('doc-journal-template')">Copy</button>
+    </div>
+    <div class="doc-output" id="doc-journal-template"></div>
+  </div>
+</div>
+
+<!-- PHOTO LOG SECTION -->
+<div class="section" id="section-photos">
+  <div class="section-title">Photo Log</div>
+  <div class="section-desc">Upload and organize your damage photos. Tag each one so your adjuster can follow the record.</div>
+
+  <div class="tip-card"><strong>Do this before cleaning anything.</strong> Take a full video walkthrough first, then photos. Every photo you add here gets a timestamp.</div>
+
+  <div class="photo-upload-zone" onclick="document.getElementById('photoFileInput').click()">
+    <div class="upload-icon">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+    </div>
+    <div class="upload-text">Tap to add photos</div>
+    <div class="upload-hint">JPG, PNG, HEIC — add as many as you need</div>
+  </div>
+  <input type="file" id="photoFileInput" accept="image/*" multiple onchange="addPhotos(event)">
+
+  <div id="photoGrid" class="photo-grid"></div>
+  <div id="photoEmpty" class="empty-state">No photos yet. Add your first photo above.</div>
+</div>
+
+<!-- DAILY JOURNAL SECTION -->
+<div class="section" id="section-journal">
+  <div class="section-title">Daily Disaster Journal</div>
+  <div class="section-desc">When you're displaced or dealing with cleanup for weeks, it all blurs together fast. Write a little every day.</div>
+
+  <div class="tip-card"><strong>Write down every day:</strong> who you called, who called back, claim number, what was damaged, what you bought, what you cleaned, where you stayed, what you were told, miles driven, and who told you to do what.</div>
+
+  <button class="btn btn-primary btn-full" onclick="addJournalEntry()" style="margin-bottom:1rem;">+ Add today's entry</button>
+
+  <div id="journalEntries"></div>
+  <div id="journalEmpty" class="empty-state">No entries yet. Tap the button above to start today's log.</div>
+</div>
+
+<!-- RESOURCES SECTION -->
+<div class="section" id="section-resources">
+  <div class="section-title">Hawaiʻi Resources</div>
+  <div class="section-desc">Official contacts and community links for Hawaiʻi disaster recovery.</div>
+
+  <div class="badge">Report damage & get help</div>
+
+  <div class="resource-card">
+    <div class="resource-icon">📋</div>
+    <div>
+      <div class="resource-title">Report damage to DEM (O'ahu)</div>
+      <div class="resource-desc">Reporting your damage is what unlocks federal resources for the state. Do this even if you have insurance.</div>
+      <a class="resource-link" href="https://www.honolulu.gov/dem/homedamage/" target="_blank">honolulu.gov/dem/homedamage →</a>
+    </div>
+  </div>
+
+  <div class="resource-card">
+    <div class="resource-icon">💰</div>
+    <div>
+      <div class="resource-title">Oahu Kona Low Storm Support — post your fundraising</div>
+      <div class="resource-desc">Share your fundraising information so the community can find and support you.</div>
+      <a class="resource-link" href="https://docs.google.com/spreadsheets/u/1/d/1AG8KjiEGxYLxF27oBnbI6I-u6H5crdhI-lf8UonpIl4/" target="_blank">Add your fundraiser →</a>
+    </div>
+  </div>
+
+  <div class="resource-card">
+    <div class="resource-icon">🌱</div>
+    <div>
+      <div class="resource-title">North Shore Farm Flood Recovery Coordination</div>
+      <div class="resource-desc">For farms affected by flooding — add your farm and needs to coordinate recovery support.</div>
+      <a class="resource-link" href="https://docs.google.com/spreadsheets/u/1/d/1fQIzv6wrTNZQG1oOxgvqoPr_LsUOGr3qGdb9dL0ZW04/edit?usp=drivesdk" target="_blank">Add your farm + needs →</a>
+    </div>
+  </div>
+
+  <div class="resource-card">
+    <div class="resource-icon">📋</div>
+    <div>
+      <div class="resource-title">Report damage to MEMA (Maui)</div>
+      <div class="resource-desc">Reporting your damage is what unlocks federal resources for the state. Do this even if you have insurance.</div>
+      <a class="resource-link" href="https://crisistrack.juvare.com/public/mauiHI/request.html" target="_blank">crisistrack.juvare.com →</a>
+    </div>
+  </div>
+
+  <div class="resource-card">
+    <div class="resource-icon">🤝</div>
+    <div>
+      <div class="resource-title">Maui Storm Kōkua — post your needs</div>
+      <div class="resource-desc">Community resource board to post what you need and find help from volunteers.</div>
+      <a class="resource-link" href="https://bit.ly/MAUISTORMKOKUA" target="_blank">bit.ly/MAUISTORMKOKUA →</a>
+    </div>
+  </div>
+
+  <div class="resource-card">
+    <div class="resource-icon">💬</div>
+    <div>
+      <div class="resource-title">Maui Flood, Fire & Disaster Relief Group</div>
+      <div class="resource-desc">Active Facebook community for real-time updates, resources, and mutual aid on Maui.</div>
+      <a class="resource-link" href="https://www.facebook.com/groups/2140737539293259" target="_blank">Find group on Facebook →</a>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+  <div class="badge">Insurance help</div>
+
+  <div class="resource-card">
+    <div class="resource-icon">🏛</div>
+    <div>
+      <div class="resource-title">Hawaiʻi Insurance Division</div>
+      <div class="resource-desc">Has a Post-Disaster Claims Guide, How to File a Claim video, and resources for homeowners, condo owners, and renters. If you run into issues with your claim, call 1-844-808-DCCA (3222).</div>
+      <a class="resource-link" href="https://cca.hawaii.gov/ins/" target="_blank">cca.hawaii.gov/ins →</a>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+  <div class="badge">Emergency accommodations</div>
+
+  <div class="resource-card">
+    <div class="resource-icon">🏨</div>
+    <div>
+      <div class="resource-title">Hotels offering Kama'āina rates for evacuees</div>
+      <div class="resource-desc">
+        Certain hotels are offering Kama'āina rates for evacuees. Call directly to confirm availability and eligibility.<br><br>
+        <strong style="font-size:12px; color: var(--text-mid);">Moana Surfrider, a Westin Resort & Spa</strong><br>
+        <span style="font-size:12px;">808-922-3111</span><br><br>
+        <strong style="font-size:12px; color: var(--text-mid);">Outrigger Waikiki Beachcomber Hotel</strong><br>
+        <span style="font-size:12px;">1-800-688-7444</span><br><br>
+        <strong style="font-size:12px; color: var(--text-mid);">Outrigger Waikiki Paradise Hotel</strong><br>
+        <span style="font-size:12px;">1-800-688-7444</span><br><br>
+        <strong style="font-size:12px; color: var(--text-mid);">Outrigger Waikiki Beach Resort</strong><br>
+        <span style="font-size:12px;">1-800-688-7444</span><br><br>
+        <strong style="font-size:12px; color: var(--text-mid);">The Royal Hawaiian, A Luxury Collection Resort</strong><br>
+        <span style="font-size:12px;">808-923-7311</span><br><br>
+        <strong style="font-size:12px; color: var(--text-mid);">Sheraton Princess Kaiulani Waikiki Beach</strong><br>
+        <span style="font-size:12px;">808-922-5811</span><br><br>
+        <strong style="font-size:12px; color: var(--text-mid);">Sheraton Waikiki Beach Resort</strong><br>
+        <span style="font-size:12px;">808-922-4422</span><br><br>
+        <strong style="font-size:12px; color: var(--text-mid);">Waikiki Beach Marriott Resort & Spa</strong><br>
+        <span style="font-size:12px;">808-922-6611</span><br><br>
+        <strong style="font-size:12px; color: var(--text-mid);">Twin Fin Hotel Waikiki</strong><br><br>
+        <strong style="font-size:12px; color: var(--text-mid);">'Alohilani Resort Waikiki Beach</strong><br><br>
+        <strong style="font-size:12px; color: var(--text-mid);">Ambassador Hotel of Waikiki, A Tapestry Collection by Hilton</strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="resource-card">
+    <div class="resource-icon">🏠</div>
+    <div>
+      <div class="resource-title">Open shelters — O'ahu</div>
+      <div class="resource-desc">
+        George Fred Wright Wahiawā District Park<br>
+        Mililani District Park<br>
+        Leilehua High School<br>
+        The Salvation Army Kroc Center Hawaii<br>
+        Nānākuli High and Intermediate<br>
+        Kāneʻohe District Park
+      </div>
+      <a class="resource-link" href="https://veoci.com/v/p/dashboard/zncjcrf9pn" target="_blank">Evacuation and Shelter Map →</a>
+    </div>
+  </div>
+
+  <div class="resource-card">
+    <div class="resource-icon">🏠</div>
+    <div>
+      <div class="resource-title">Open shelters — Maui</div>
+      <div class="resource-desc">
+        Lahaina Civic Center<br>
+        South Maui Community Park Gym<br>
+        Maui High School<br>
+        Hana High School<br>
+        Mitchell Pauole Center (Molokai)<br>
+        Lanai Community Gym (Lanai)
+      </div>
+      <a class="resource-link" href="https://www.mauicounty.gov/emergency" target="_blank">Check current status at mauicounty.gov →</a>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+  <div class="badge">Federal assistance</div>
+
+  <div class="resource-card">
+    <div class="resource-icon">🇺🇸</div>
+    <div>
+      <div class="resource-title">Apply for FEMA assistance</div>
+      <div class="resource-desc">Even if you have insurance, apply for FEMA. They can cover costs your insurer doesn't. Apply online or call 1-800-621-3362.</div>
+      <a class="resource-link" href="https://www.disasterassistance.gov" target="_blank">disasterassistance.gov →</a>
+    </div>
+  </div>
+</div>
+
+<div class="save-toast" id="saveToast">Saved</div>
+
+<script>
+const STORAGE_KEY = 'drc_hawaii_v1';
+let state = { checks: {}, info: {}, photos: [], journal: [] };
+
+function loadState() {
+  try {
+    const s = localStorage.getItem(STORAGE_KEY);
+    if (s) state = { ...state, ...JSON.parse(s) };
+  } catch(e) {}
+}
+
+function persistState() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
+}
+
+function showToast(msg) {
+  const t = document.getElementById('saveToast');
+  t.textContent = msg || 'Saved';
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+function showSection(name) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('section-' + name).classList.add('active');
+  const tabs = document.querySelectorAll('.nav-tab');
+  const names = ['checklist','myinfo','documents','photos','journal','resources'];
+  tabs[names.indexOf(name)].classList.add('active');
+  if (name === 'documents') generateDocs();
+  window.scrollTo(0, 0);
+}
+
+function toggleCheck(el) {
+  el.classList.toggle('checked');
+  const id = el.dataset.id;
+  state.checks[id] = el.classList.contains('checked');
+  persistState();
+  updateProgress();
+}
+
+function updateProgress() {
+  const items = document.querySelectorAll('.check-item');
+  const total = items.length;
+  const done = document.querySelectorAll('.check-item.checked').length;
+  const pct = total ? Math.round(done / total * 100) : 0;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressLabel').textContent = done + ' of ' + total + ' steps completed';
+  const tab = document.querySelector('.nav-tab');
+  if (done === total && total > 0) {
+    tab.classList.add('done');
+  } else {
+    tab.classList.remove('done');
+  }
+}
+
+function saveInfo() {
+  const fields = ['name','address','phone','email','date','proptype','insurer','policy','claim','adjuster-name','adjuster-contact','damage','contractor','contractor-contact'];
+  fields.forEach(f => {
+    const el = document.getElementById('info-' + f);
+    if (el) state.info[f] = el.value;
+  });
+  persistState();
+}
+
+function loadInfo() {
+  const fields = ['name','address','phone','email','date','proptype','insurer','policy','claim','adjuster-name','adjuster-contact','damage','contractor','contractor-contact'];
+  fields.forEach(f => {
+    const el = document.getElementById('info-' + f);
+    if (el && state.info[f]) el.value = state.info[f];
+  });
+}
+
+function g(f) { return state.info[f] || '[' + f.replace(/-/g,' ') + ']'; }
+
+function generateDocs() {
+  const i = state.info;
+  const name = i['name'] || '[Your Name]';
+  const address = i['address'] || '[Property Address]';
+  const phone = i['phone'] || '[Your Phone]';
+  const email = i['email'] || '[Your Email]';
+  const date = i['date'] ? new Date(i['date']).toLocaleDateString('en-US', {year:'numeric',month:'long',day:'numeric'}) : '[Date of Incident]';
+  const insurer = i['insurer'] || '[Insurance Company]';
+  const policy = i['policy'] || '[Policy Number]';
+  const claim = i['claim'] || '[Claim Number]';
+  const adjName = i['adjuster-name'] || '[Adjuster Name]';
+  const adjContact = i['adjuster-contact'] || '[Adjuster Contact]';
+  const damage = i['damage'] || '[Brief description of damage]';
+  const proptype = i['proptype'] || 'homeowner';
+  const propLabel = {homeowner:'homeowners',renter:'renters',condo:'condo owners'}[proptype] || 'homeowners';
+  const contractor = i['contractor'] || '[Contractor Name]';
+  const contractorContact = i['contractor-contact'] || '[Contractor Contact]';
+
+  document.getElementById('doc-insurance').textContent =
+`Subject: Flood Damage Claim — Policy #${policy} — ${date}
+
+To Whom It May Concern at ${insurer},
+
+My name is ${name} and I am a ${propLabel} policyholder (Policy #${policy}). My property at ${address} sustained flood damage on ${date}.
+
+I am writing to formally open a claim and request the following:
+  • My official claim number
+  • The name and contact information for my assigned adjuster
+  • All relevant deadlines for my claim
+  • Clarification on what temporary repairs I am authorized to perform
+  • Confirmation of whether additional living expenses (hotel, meals, mileage) are covered under my policy
+
+I have documented all damage with photos and video taken on ${date} before any cleanup began.
+
+Please contact me at:
+Phone: ${phone}
+Email: ${email}
+
+I look forward to your prompt response.
+
+Sincerely,
+${name}
+${address}`;
+
+  document.getElementById('doc-adjuster').textContent =
+`Subject: Follow-Up — Claim #${claim} — ${name}
+
+Dear ${adjName},
+
+Thank you for opening my claim. I wanted to follow up and provide an update on the situation at ${address}.
+
+Claim number: ${claim}
+Date of loss: ${date}
+Damage summary: ${damage}
+
+I have the following questions / outstanding items:
+  • [ ] What is the timeline for your inspection visit?
+  • [ ] What temporary repairs may I proceed with immediately?
+  • [ ] Are living expenses (hotel at $___/night) already approved?
+  • [ ] What documentation do you still need from me?
+
+I am available at ${phone} or ${email} and can be reached any time.
+
+Thank you,
+${name}`;
+
+  document.getElementById('doc-fema').textContent =
+`FEMA / MEMA Damage Report — Personal Notes
+Use these when registering at disasterassistance.gov or crisistrack.juvare.com/public/mauiHI/request.html
+
+Your name: ${name}
+Address of damaged property: ${address}
+Date of damage: ${date}
+Phone: ${phone}
+Email: ${email}
+
+Type of damage to describe:
+  • Structural damage (walls, floors, foundation)
+  • Contents / personal property
+  • Vehicle damage (if applicable)
+  • Business/income loss (if applicable)
+
+Damage description (in your own words):
+${damage}
+
+Insurance status:
+  • Insurer: ${insurer}
+  • Policy #: ${policy}
+  • Claim #: ${claim}
+
+Note: Apply for FEMA even if you have insurance — FEMA can cover costs your insurer does not. Call 1-800-621-3362 or visit disasterassistance.gov`;
+
+  document.getElementById('doc-contractor').textContent =
+`Subject: Estimate Request — Flood Damage at ${address}
+
+Dear ${contractor},
+
+My name is ${name} and I am seeking a written estimate for flood damage repair at:
+${address}
+
+Date of damage: ${date}
+Description of damage: ${damage}
+
+I need a written estimate that includes:
+  • Scope of work with line-item pricing
+  • Materials to be used
+  • Estimated timeline
+  • Your contractor license number
+  • Proof of insurance / bonding
+
+This estimate will be submitted to my insurance company (${insurer}, Claim #${claim}), so please ensure it is on company letterhead with your signature.
+
+I can be reached at ${phone} or ${email} to schedule a walk-through.
+
+Thank you,
+${name}`;
+
+  const today = new Date().toLocaleDateString('en-US', {weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  document.getElementById('doc-journal-template').textContent =
+`Daily Disaster Recovery Journal
+Date: ${today}
+Location I stayed last night: _______________
+
+CALLS MADE TODAY:
+  Person / Company called: _______________ Time: ___
+  Outcome / what they said: _______________
+  Follow-up needed: _______________
+
+CALLS RECEIVED:
+  Who called: _______________ Time: ___
+  What they said / promised: _______________
+
+CLAIM INFO:
+  Claim #: ${claim}
+  Adjuster: ${adjName} — ${adjContact}
+
+WORK DONE TODAY:
+  What I cleaned / removed: _______________
+  Who helped: _______________
+
+PURCHASES TODAY (save ALL receipts):
+  Item / store: _______________ Amount: $___
+  Item / store: _______________ Amount: $___
+
+MILES DRIVEN TODAY: _____ miles
+  From: _______________ To: _______________
+
+IMPORTANT: What I was told to do / not do today:
+_______________
+
+HOW I'M FEELING (be honest — this is for you):
+_______________`;
+}
+
+function copyDoc(id) {
+  const text = document.getElementById(id).textContent;
+  navigator.clipboard.writeText(text).then(() => showToast('Copied to clipboard'));
+}
+
+// PHOTOS
+let photos = [];
+function addPhotos(e) {
+  const files = Array.from(e.target.files);
+  files.forEach(file => {
+    const reader = new FileReader();
+    reader.onload = function(ev) {
+      const p = { id: Date.now() + Math.random(), src: ev.target.result, tag: 'Room Damage', note: '', date: new Date().toLocaleString() };
+      photos.push(p);
+      renderPhotos();
+    };
+    reader.readAsDataURL(file);
+  });
+  e.target.value = '';
+}
+
+function renderPhotos() {
+  const grid = document.getElementById('photoGrid');
+  const empty = document.getElementById('photoEmpty');
+  if (photos.length === 0) { grid.innerHTML = ''; empty.style.display = ''; return; }
+  empty.style.display = 'none';
+  grid.innerHTML = photos.map((p, i) => `
+    <div class="photo-card">
+      <img class="photo-thumb" src="${p.src}" alt="damage photo">
+      <div class="photo-meta">
+        <select class="photo-tag-select" onchange="updatePhotoTag(${i}, this.value)">
+          ${['Room Damage','Appliance','Receipt','Flood Line','Electronics','Furniture','Exterior','Other'].map(t =>
+            `<option value="${t}" ${p.tag===t?'selected':''}>${t}</option>`
+          ).join('')}
+        </select>
+        <textarea class="photo-note-input" rows="2" placeholder="Add a note..." onchange="updatePhotoNote(${i}, this.value)">${p.note}</textarea>
+        <div class="photo-date">${p.date}</div>
+      </div>
+      <button class="photo-remove" onclick="removePhoto(${i})">Remove</button>
+    </div>
+  `).join('');
+}
+function updatePhotoTag(i, v) { photos[i].tag = v; }
+function updatePhotoNote(i, v) { photos[i].note = v; }
+function removePhoto(i) { photos.splice(i, 1); renderPhotos(); }
+
+// JOURNAL
+function addJournalEntry() {
+  const today = new Date().toLocaleDateString('en-US', {weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  const entries = document.getElementById('journalEntries');
+  const empty = document.getElementById('journalEmpty');
+  empty.style.display = 'none';
+  const div = document.createElement('div');
+  div.className = 'journal-entry';
+  div.innerHTML = `
+    <div class="journal-date">${today}</div>
+    <textarea class="journal-textarea" placeholder="Who you called, what was said, what you bought, where you stayed, what was damaged, miles driven, what you were told to do..."
+      oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'; saveJournal(this)"></textarea>
+  `;
+  entries.insertBefore(div, entries.firstChild);
+}
+function saveJournal() { showToast('Journal saved'); }
+
+// INIT
+loadState();
+
+document.querySelectorAll('.check-item').forEach(el => {
+  if (state.checks[el.dataset.id]) el.classList.add('checked');
+});
+
+loadInfo();
+updateProgress();
+renderPhotos();
+
+if (state.journal && state.journal.length) {
+  state.journal.forEach(e => { /* restore journal entries if needed */ });
+}
+</script>
+</body>
+</html>
